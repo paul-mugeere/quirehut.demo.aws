@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Quirehut Demo Fargate cluster'
+
+Resources:
+  QuirehutFargateCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: quirehut-demo-fargate-cluster
+      CapacityProviders:
+        - FARGATE
+      DefaultCapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Weight: 1
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+Outputs:
+  Cluster:
+    Description: Quirehut Demo Fargate cluster
+    Value: !Ref QuirehutFargateCluster
+    Export:
+      Name: quirehut-demo-Cluster
