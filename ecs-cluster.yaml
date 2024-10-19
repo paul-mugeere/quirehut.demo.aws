@@ -5,7 +5,7 @@ Resources:
   QuirehutFargateCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: quirehut-demo-fargate-cluster
+      ClusterName: quirehut-demo-cluster
       CapacityProviders:
         - FARGATE
       DefaultCapacityProviderStrategy:
@@ -20,4 +20,4 @@ Outputs:
     Description: Quirehut Demo Fargate cluster
     Value: !Ref QuirehutFargateCluster
     Export:
-      Name: quirehut-demo-Cluster
+      Name: QuirehutDemoCluster

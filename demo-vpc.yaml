@@ -2,36 +2,36 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Quirehut Demo VPC with Public and Private Subnets'
 
 Parameters:
-  VpcCIDR:
+  QuirehutDemoVpcCidr:
     Description: CIDR block for the VPC
     Type: String
     Default: 10.0.0.0/16
 
-  PublicSubnet1CIDR:
+  QuirehutDemoPublicSubnet1Cidr:
     Description: CIDR block for Public Subnet 1
     Type: String
     Default: 10.0.1.0/24
   
-  PublicSubnet2CIDR:
+  QuirehutDemoPublicSubnet2Cidr:
     Description: CIDR block for Public Subnet 2
     Type: String
     Default: 10.0.2.0/24
 
-  PrivateSubnet1CIDR:
+  QuirehutDemoPrivateSubnet1Cidr:
     Description: CIDR block for Private Subnet 1
     Type: String
     Default: 10.0.3.0/24
 
-  PrivateSubnet2CIDR:
+  QuirehutDemoPrivateSubnet2Cidr:
     Description: CIDR block for Private Subnet 2
     Type: String
     Default: 10.0.4.0/24
 
 Resources:
-  VPC:
+  QuirehutDemoVpc:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: !Ref VpcCIDR
+      CidrBlock: !Ref QuirehutDemoVpcCidr
       EnableDnsHostnames: true
       EnableDnsSupport: true
       InstanceTenancy: default
@@ -39,150 +39,150 @@ Resources:
         - Key: Name
           Value: !Sub '${AWS::StackName}-vpc'
 
-  PublicSubnet1:
+  QuirehutDemoPublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: !Ref PublicSubnet1CIDR
-      VpcId: !Ref VPC
+      CidrBlock: !Ref QuirehutDemoPublicSubnet1Cidr
+      VpcId: !Ref QuirehutDemoVpc
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-subnet1-public'
   
-  PublicSubnet2:
+  QuirehutDemoPublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: !Ref PublicSubnet2CIDR
-      VpcId: !Ref VPC
+      CidrBlock: !Ref QuirehutDemoPublicSubnet2Cidr
+      VpcId: !Ref QuirehutDemoVpc
       AvailabilityZone: !Select [ 1, !GetAZs '' ]
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-subnet2-public'
 
-  PrivateSubnet1:
+  QuirehutDemoPrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: !Ref PrivateSubnet1CIDR
-      VpcId: !Ref VPC
+      CidrBlock: !Ref QuirehutDemoPrivateSubnet1Cidr
+      VpcId: !Ref QuirehutDemoVpc
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-subnet1-private'
 
-  PrivateSubnet2:
+  QuirehutDemoPrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: !Ref PrivateSubnet2CIDR
-      VpcId: !Ref VPC
+      CidrBlock: !Ref QuirehutDemoPrivateSubnet2Cidr
+      VpcId: !Ref QuirehutDemoVpc
       AvailabilityZone: !Select [ 1, !GetAZs '' ]
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-subnet2-private'
 
-  InternetGateway:
+  QuirehutDemoIgw:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-igw'
 
-  InternetGatewayAttachment:
+  QuirehutDemoIgwAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref VPC
+      InternetGatewayId: !Ref QuirehutDemoIgw
+      VpcId: !Ref QuirehutDemoVpc
 
-  PublicRouteTable:
+  QuirehutDemoPublicRtb:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref QuirehutDemoVpc
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-rtb-public'
 
-  DefaultPublicRoute:
+  QuirehutDemoDefaultPublicRoute:
     Type: AWS::EC2::Route
-    DependsOn: InternetGatewayAttachment
+    DependsOn: QuirehutDemoIgwAttachment
     Properties:
-      RouteTableId: !Ref PublicRouteTable
+      RouteTableId: !Ref QuirehutDemoPublicRtb
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
+      GatewayId: !Ref QuirehutDemoIgw
 
-  PublicSubnet1RouteTableAssociation:
+  QuirehutDemoPublicSubnet1RtbAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref QuirehutDemoPublicRtb
+      SubnetId: !Ref QuirehutDemoPublicSubnet1
   
-  PublicSubnet2RouteTableAssociation:
+  QuirehutDemoPublicSubnet2RtbAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref QuirehutDemoPublicRtb
+      SubnetId: !Ref QuirehutDemoPublicSubnet2
 
-  PrivateRouteTable:
+  QuirehutDemoPrivateRtb:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref QuirehutDemoVpc
       Tags:
         - Key: Name
-          Value: !Sub '${AWS::StackName}-rtb=private'
+          Value: !Sub '${AWS::StackName}-rtb-private'
 
-  PrivateSubnet1RouteTableAssociation:
+  QuirehutDemoPrivateSubnet1RtbAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref QuirehutDemoPrivateRtb
+      SubnetId: !Ref QuirehutDemoPrivateSubnet1
 
-  PrivateSubnet2RouteTableAssociation:
+  QuirehutDemoPrivateSubnet2RtbAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref QuirehutDemoPrivateRtb
+      SubnetId: !Ref QuirehutDemoPrivateSubnet2
 
 Outputs:
-  VPC:
+  QuirehutDemoVpc:
     Description: 'A reference to the created vpc'
-    Value: !Ref VPC
+    Value: !Ref QuirehutDemoVpc
     Export:
-      Name: quirehut-demo-vpc
+      Name: QuirehutDemoVpc
 
-  PublicSubnets:
+  QuirehutDemoPublicSubnets:
     Description: 'A list of the public subnets in vpc'
-    Value: !Join [",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
+    Value: !Join [",", [ !Ref QuirehutDemoPublicSubnet1, !Ref QuirehutDemoPublicSubnet2 ]]
     Export:
-      Name: quirehut-demo-public-subnets
+      Name: QuirehutDemoPublicSubnets
 
-  PrivateSubnets:
+  QuirehutDemoPrivateSubnets:
     Description: 'A list of the private subnets in vpc'
-    Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 ]]
+    Value: !Join [ ",", [ !Ref QuirehutDemoPrivateSubnet1, !Ref QuirehutDemoPrivateSubnet2 ]]
     Export:
-      Name: quirehut-demo-private-subnets
+      Name: QuirehutDemoPrivateSubnets
 
-  PublicSubnet1:
+  QuirehutDemoPublicSubnet1:
     Description: 'A reference to the public subnet 1'
-    Value: !Ref PublicSubnet1
+    Value: !Ref QuirehutDemoPublicSubnet1
     Export:
-      Name: quirehut-demo-subnet1-public
+      Name: QuirehutDemoPublicSubnet1
   
-  PublicSubnet2:
+  QuirehutDemoPublicSubnet2:
     Description: 'A reference to the public subnet 2'
-    Value: !Ref PublicSubnet2
+    Value: !Ref QuirehutDemoPublicSubnet2
     Export:
-      Name: quirehut-demo-subnet2-public
+      Name: QuirehutDemoPublicSubnet2
 
-  PrivateSubnet1:
+  QuirehutDemoPrivateSubnet1:
     Description: 'A reference to the private subnet 1 in the 1st Availability Zone'
-    Value: !Ref PrivateSubnet1
+    Value: !Ref QuirehutDemoPrivateSubnet1
     Export:
-      Name: quirehut-demo-subnet1-private
+      Name: QuirehutDemoPrivateSubnet1
 
-  PrivateSubnet2:
+  QuirehutDemoPrivateSubnet2:
     Description: 'A reference to the private subnet 2 in the 2nd Availability Zone'
-    Value: !Ref PrivateSubnet2
+    Value: !Ref QuirehutDemoPrivateSubnet2
     Export:
-      Name: quirehut-demo-subnet2-private
+      Name: QuirehutDemoPrivateSubnet2
